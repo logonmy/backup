@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ch">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style>
+        #trans-container {
+            top: 200px;
+            left: 200px;
+            margin: 0 auto;
+            border-radius: 8px;
+            box-shadow: 0 0 0 -20px rgba(0, 0, 0, .2), 0 24px 38px 3px rgba(0, 0, 0, .14), 0 9px 46px 8px rgba(0, 0, 0, .12);
+            position: fixed;
+            background: rgba(255, 255, 255, 0.95);
+            width: 150px;
+            max-height: 100px;
+            overflow: auto;
+            opacity: 40%;
+            z-index: 999999999;
+        }
+
+        #trans-container div p,
+        #trans-container div input {
+            font-weight: 100;
+            padding: 0;
+            margin: 0;
+        }
+
+        #trans-container div input{
+            border-width: 0;
+        }
+
+        #trans-container div input:focus{
+            outline: none;
+        }
+
+        #trans-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        [v-cloak] {
+            display: none
+        }
+    </style>
+</head>
+<body>
+<div id="trans-container" @mousedown="move" v-cloak v-show="show">
+    <div style="text-align: center;">
+        <input type="text" v-model="text" placeholder="翻译，在此输入" @keypress.enter="send"
+               style="width: 100%;text-align: center;">
+    </div>
+    <div>
+        <p v-text="ret"></p>
+    </div>
+</div>
+</body>
+<script>
+    let pattern = new RegExp("[\u4E00-\u9FA5]+");
+
+    function getTrans(text) {
+        if (pattern.test(text)) {
+            if (window.top.transapp)
+                getEN(text)
+        } else {
+            if (window.top.transapp)
+                getZH(text)
+        }
+    }
+
+    function getZH(text) {
+        axios.get('https:ligaofeng.top:8203/trans/to/zh?text=' + text)
+            .then(function (response) {
+                let data = response.data;
+                if (data["status"] == "ok") {
+                    data = data.msg;
+                    data = JSON.parse(data);
+                    if (data.ret!=0){
+                        console.log(data.msg)
+                        window.top.transapp.ret = "翻译失败";
+                        return
+                    }
+                    window.top.transapp.ret = data.data.target_text;
+                } else {
+                    console.log(data.msg)
+                    window.top.transapp.ret = "翻译失败";
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+                window.top.transapp.ret = "翻译失败";
+            });
+    }
+
+    function getEN(text) {
+        axios.get('https:ligaofeng.top:8203/trans/to/en?text=' + text)
+            .then(function (response) {
+                let data = response.data;
+                if (data["status"] == "ok") {
+                    data = data.msg;
+                    data = JSON.parse(data);
+                    if (data.ret!=0){
+                        console.log(data.msg)
+                        window.top.transapp.ret = "翻译失败";
+                        return
+                    }
+                    window.top.transapp.ret = data.data.target_text;
+                } else {
+                    console.log(data.msg)
+                    window.top.transapp.ret = "翻译失败";
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+                window.top.transapp.ret = "翻译失败";
+            });
+    }
+
+    window.top.addEventListener("keypress", function (ev) {
+        switch (ev.key) {
+            case "`":
+                if (!window.top.transapp)
+                    window.top.transapp = new Vue({
+                        el: "#trans-container",
+                        data: {
+                            text: "",
+                            ret: "",
+                            positionX: 0,
+                            positionY: 0,
+                            show: true
+                        },
+                        methods: {
+                            send() {
+                                if (this.text) {
+                                    this.ret = "获取中。。。"
+                                    getTrans(this.text)
+                                    this.text = ""
+                                }
+                            },
+                            move(e) {
+                                let odiv = document.getElementById("trans-container");
+                                let disX = e.clientX - odiv.offsetLeft;
+                                let disY = e.clientY - odiv.offsetTop;
+                                document.onmousemove = (e) => {
+                                    let left = e.clientX - disX;
+                                    let top = e.clientY - disY;
+                                    this.positionX = top;
+                                    this.positionY = left;
+                                    odiv.style.left = left + 'px';
+                                    odiv.style.top = top + 'px';
+                                };
+                                document.onmouseup = () => {
+                                    document.onmousemove = null;
+                                    document.onmouseup = null;
+                                };
+                            },
+                        }
+                    })
+                else
+                    window.top.transapp.show = !window.top.transapp.show
+                break
+        }
+    })
+</script>
+</html>

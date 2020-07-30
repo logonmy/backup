@@ -1,0 +1,14 @@
+﻿{% extends 'base.html' %}
+{% block banner %}{% endblock %}
+{% block main %}
+    <div class="container container-404 text-center d-flex align-items-center">
+        <div class="data">
+            <h1>404</h1>
+            <h2>Page Not Found!</h2>
+            <p>The page you are looking for was moved, removed, renamed or never existed.  Please check the url or go to <a href="{% url 'myblog:index' %}">Main Page.</a></p>
+        </div>
+    </div>
+{% endblock %}
+{% block subscript %}{% endblock %}
+{% block cus_script %}{% endblock %}
+{% block title %}找不到你要的页面啦{% endblock %}

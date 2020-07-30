@@ -1,0 +1,83 @@
+﻿{% extends 'base.html' %}
+{% block banner %}{% endblock %}
+{% load cus_tags %}
+{% block cus_script %}{% endblock %}
+{% block subscript %}{% endblock %}
+{% block main %}
+    <!-- Page title -->
+    <div class="page-title search-title">
+        <div class="container">
+            {% if posts.object_list %}
+                <h2><span>Search results for:</span>{{ kw }}</h2>
+            {% else %}
+                <h2><span>抱歉，没有 {{ kw }} 的相关搜索结果</span></h2>
+            {% endif %}
+        </div>
+    </div>
+    <!-- End of Page title -->
+    {% if posts.object_list %}
+        <div class="container pt-120 pb-90">
+            <div class="row">
+                {% for post in posts.object_list %}
+                    <div class="col-sm-6">
+                        <!-- Post -->
+                        <div class="post-default">
+                            <div class="post-thumb">
+                                <a href="/blog/{{ post.id }}">
+                                    <img src="{{ post.cover | cover_url }}" alt="" class="img-fluid">
+                                </a>
+                            </div>
+                            <div class="post-data">
+                                <!-- Category -->
+                                <div class="cats"><a
+                                        href="/category/?id={{ post.category.id }}">{{ post.category.name }}</a></div>
+                                <!-- Title -->
+                                <div class="title">
+                                    <h2><a href="/blog/{{ post.id }}">{{ post.title }}</a></h2>
+                                </div>
+                                <!-- Post Desc -->
+                                <div class="desc">
+                                    {% autoescape off %}
+                                        {{ post.content | img_size:'40px' | truncatechars_html:200 }}
+                                    {% endautoescape %}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End of Post -->
+                    </div>
+                {% endfor %}
+
+
+            </div>
+            {% if posts.object_list %}
+
+                <!-- Post Pagination -->
+                <div class="post-pagination d-flex justify-content-center">
+                    {% if posts.has_previous %}
+                        <a href="?kw={{ kw }}&{{ posts.previous_page_number.querystring }}"><i class="fa fa-angle-left"></i></a>
+                    {% endif %}
+                    {% for page in posts.pages %}
+                        {% if page %}
+                            {% ifequal page posts.number %}
+                                <span class="current"><a href="?kw={{ kw }}&{{ page.querystring }}"
+                                                         class="current">{{ page }}</a></span>
+                            {% else %}
+                                <a href="?kw={{ kw }}&{{ page.querystring }}">{{ page }}</a>
+                            {% endifequal %}
+                        {% else %}
+                            <span>...</span>
+                        {% endif %}
+                    {% endfor %}
+                    {% if posts.has_next %}
+                        <a href="?kw={{ kw }}&{{ posts.next_page_number.querystring }}"><i class="fa fa-angle-right"></i></a>
+                    {% endif %}
+                </div>
+                <!-- End of Post Pagination -->
+            {% endif %}
+        </div>
+
+
+    {% endif %}
+
+
+{% endblock %}

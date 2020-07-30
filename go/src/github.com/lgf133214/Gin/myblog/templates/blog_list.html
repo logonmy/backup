@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load cus_tags %}
+{% block banner %}{% endblock %}
+{% block main %}
+<!-- post with sidebar -->
+<div class="container pt-40 pb-90">
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Popular Post -->
+            <section class="popular-post pb-10">
+                <!-- Section title -->
+                <div class="section-title">
+                    <h2>{{ desc }}</h2>
+                </div>
+                <!-- End of Section title -->
+
+                <div class="post-blog-list">
+                    <!-- Post -->
+                    {% for post in posts.object_list %}
+                        <div class="post-default post-has-right-thumb">
+                            <div class="d-flex flex-wrap">
+                                <div class="post-thumb align-self-stretch order-md-2">
+                                    <a href="/blog/{{ post.id }}">
+                                        <div data-bg-img="{{ post.cover | cover_url }}"></div>
+                                    </a>
+                                </div>
+                                <div class="post-data order-md-1">
+                                    <!-- Category -->
+                                    <div class="cats"><a
+                                            href="/category/?id={{ post.category.id }}">{{ post.category.name }}</a>
+                                    </div>
+                                    <!-- Title -->
+                                    <div class="title">
+                                        <h2><a href="/blog/{{ post.id }}">{{ post.title }}</a>
+                                        </h2>
+                                    </div>
+                                    <!-- Post Meta -->
+                                    <ul class="nav meta align-items-center">
+                                        <li class="meta-author">
+                                            <a href="/blog/{{ post.id }}"> Views: {{ post.views.all.count }}</a>
+                                        </li>
+                                        <li class="meta-date"><a
+                                                href="/blog/{{ post.id }}">{{ post.pub_date|date:'Y-m-d' }}</a></li>
+                                        <li class="meta-comments"><a href="/blog/{{ post.id }}#com"><i
+                                                class="fa fa-comment"></i>{{ post.comment_set.count }}</a></li>
+                                    </ul>
+                                    <!-- Post Desc -->
+                                    <div class="desc">
+                                        {% autoescape off %}
+<!--                                            {{ post.content | img_size:'40px' | truncatechars_html:200 }}-->
+                                        {{ post.title }}
+                                        {% endautoescape %}
+                                    </div>
+                                    <!-- Read More Button -->
+                                    <a href="/blog/{{ post.id }}" class="btn btn-primary">View More</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <!-- End of Post -->
+                {% if posts.object_list %}
+
+                    <!-- Post Pagination -->
+                    <div class="post-pagination d-flex justify-content-center">
+                        {% if posts.has_previous %}
+                            <a href="?{{ posts.previous_page_number.querystring }}"><i class="fa fa-angle-left"></i></a>
+                        {% endif %}
+                        {% for page in posts.pages %}
+                            {% if page %}
+                                {% ifequal page posts.number %}
+                                    <span class="current"><a href="?{{ page.querystring }}" class="current">{{ page }}</a></span>
+                                {% else %}
+                                    <a href="?{{ page.querystring }}">{{ page }}</a>
+                                {% endifequal %}
+                            {% else %}
+                                <span>...</span>
+                            {% endif %}
+                        {% endfor %}
+                        {% if posts.has_next %}
+                            <a href="?{{ posts.next_page_number.querystring }}"><i class="fa fa-angle-right"></i></a>
+                        {% endif %}
+                    </div>
+                    <!-- End of Post Pagination -->
+                {% endif %}
+                </div>
+            </section>
+            <!-- End of Popular Post  -->
+
+
+        </div>
+        {% include 'slide.html' %}
+    </div>
+</div>
+<!-- end of post with sidebar -->
+
+
+{% endblock %}
+
+

@@ -1,0 +1,138 @@
+{{block "header" .}}<!DOCTYPE html>
+<html lang="ch">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <!-- Document Title -->
+    <title>{{.Title}}</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="/assets/images/favicon.ico">
+
+    <!--==== Google Fonts ====-->
+    <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500%7CSpectral:400,400i,500,600,700"
+          rel="stylesheet">
+
+    <!-- CSS Files -->
+
+    <!--==== Bootstrap css file ====-->
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+
+    <!--==== Font-Awesome css file ====-->
+    <link rel="stylesheet" href="/assets/css/font-awesome.min.css">
+
+    <!--==== Animate CSS ====-->
+    <link rel="stylesheet" href="/assets/plugins/animate/animate.min.css">
+
+    <!--==== Style css file ====-->
+    <link rel="stylesheet" href="/assets/css/style.css">
+
+    <!--==== Custom css file ====-->
+    <link rel="stylesheet" href="/assets/css/custom.css">
+
+
+    <!-- ==== Baidu JQuery js file ==== -->
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+</head>
+<body>
+<!-- Preloader -->
+<div class="preloader">
+    <div class="preload-img">
+        <div class="spinnerBounce">
+            <div class="double-bounce1"></div>
+            <div class="double-bounce2"></div>
+        </div>
+    </div>
+</div>
+<!-- End of Preloader -->
+
+<!-- Nav Search Box -->
+<div class="nav-search-box">
+    <form action="/search">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="输入关键字搜索">
+            <span class="b-line"></span>
+            <span class="b-line-under"></span>
+            <div class="input-group-append">
+                <button type="button" class="btn">
+                    <img src="/assets/images/search-icon.svg" alt="" class="img-fluid svg">
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- End of Nav Search Box -->
+
+<!-- Header -->
+<header class="header">
+    <div class="header-fixed">
+        <div class="container-fluid pl-120 pr-120 position-relative">
+            <div class="row d-flex align-items-center">
+                <div class="col-lg-3 col-md-4 col-6">
+                    <!-- Logo -->
+                    <div class="logo">
+                        <a href="javascript:void(0);"><img src="/assets/images/logo.png" alt="" class="img-fluid"></a>
+                    </div>
+                    <!-- End of Logo -->
+                </div>
+
+                <div class="col-lg-9 col-md-8 col-6 d-flex justify-content-end position-static">
+                    <!-- Nav Menu -->
+                    <div class="nav-menu-cover">
+                        <ul class="nav nav-menu">
+                            <li><a href="/">主页</a></li>
+                            <li><a href="/about">关于</a></li>
+                            <li class="menu-item-has-children"><a href="javascript:void(0);">分类</a>
+                                <ul class="sub-menu">
+                                    <li><a href="/list">全部文章</a></li>
+                                    {{range .getCategories}}
+                                        <li><a href="/list/category/{{.Id}}">{{.Category}}</a></li>
+                                    {{end}}
+                                </ul>
+                            </li>
+                            <li><a href="/contact">联系作者</a></li>
+                            {{with .Login}}
+                                <li class="menu-item-has-children">
+                                    <a href="javascript:void(0)">管理</a>
+                                    <ul class="sub-menu">
+                                        <li><a href="/logout">注销</a></li>
+                                        <li><a href="/reset/pw">修改密码</a></li>
+                                        <li><a href="/user/info">个人信息修改</a></li>
+                                        {{if $.Superuser}}
+                                            <li><a href="/fenggeniubi">后台管理</a></li>
+                                        {{end}}
+                                    </ul>
+                                </li>
+                            {{else}}
+                                <li>
+                                    <a href="/login">登录</a>
+                                </li>
+                            {{end}}
+                        </ul>
+                    </div>
+                    <!-- End of Nav Menu -->
+
+                    <!-- Mobile Menu -->
+                    <div class="mobile-menu-cover">
+                        <ul class="nav mobile-nav-menu">
+                            <li class="search-toggle-open">
+                                <img src="/assets/images/search-icon.svg" alt="" class="img-fluid svg">
+                            </li>
+                            <li class="search-toggle-close hide">
+                                <img src="/assets/images/close.svg" alt="" class="img-fluid">
+                            </li>
+                            <li class="nav-menu-toggle">
+                                <img src="/assets/images/menu-toggler.svg" alt="" class="img-fluid svg">
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- End of Mobile Menu -->
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<!-- End of Header -->
+{{end}}

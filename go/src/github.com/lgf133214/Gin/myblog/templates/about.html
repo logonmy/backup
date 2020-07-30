@@ -1,0 +1,42 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+{% block banner %}{% endblock %}
+{% block main %}
+<!-- Page title -->
+<div class="page-title">
+    <div class="container">
+        <h2>About</h2>
+        <ul class="nav">
+            <li><a href="/">Home</a></li>
+            <li>Me</li>
+        </ul>
+    </div>
+</div>
+<!-- End of Page title -->
+
+<div class="container pt-120 pb-90">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="page-thumb" style="text-align: center">
+                <img src="{% static 'images/blog/about.jpg' %}" alt="" class="img-fluid" width="200px">
+            </div>
+            <div class="col-md-10 offset-md-1">
+                <div class="page-text">
+                    <div class="page-primary-text pb-60">
+                        <div class="page-para-title h2">欢迎来访</div>
+                        <p>本站使用Django搭建，仅供学习娱乐之用，如果有兴趣，可以来一块学习玩耍<br>本人刚开始学习，实属菜鸡一个，如果有大哥想搞我服务器也可以，但搞完请给我发个邮件，谢谢大哥(✿◕‿◕✿)</p>
+                    </div>
+
+                    <div class="page-primary-text pb-40">
+                        <div class="page-para-title h3">关注我</div>
+                        <p>下方的邮箱订阅用来获取最新的通知，关于是否自动发送，这里我默认就手动发了，只有在发生重大变动的时候选择发送，如果有特殊需要可以发邮件联系我</p>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

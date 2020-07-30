@@ -1,0 +1,77 @@
+{% load static %}
+<div class="col-lg-4">
+    <div class="pt-88">
+        <div class="my-sidebar">
+            <!-- Author Widget -->
+            <div class="widget widget-about">
+                <!-- Widget Content -->
+                <div class="widget-content">
+                    <!-- Author Image -->
+                    <div class="author-image">
+                        <img src="{% static 'images/blog/author.jpg' %}" alt="" class="img-fluid">
+                    </div>
+                    <!-- Author Name -->
+                    <div class="author-name text-center">
+                        <a href="javascript:void(0);"> contact@ligaofeng.top </a>
+                    </div>
+                    <!-- Author Social Links -->
+                    <div class="author-social text-center">
+                        <a href="javascript:void(0);"><i class="fa fa-facebook"></i></a>
+                        <a href="javascript:void(0);"><i class="fa fa-twitter"></i></a>
+                        <a href="javascript:void(0);"><i class="fa fa-linkedin"></i></a>
+                        <a href="javascript:void(0);"><i class="fa fa-google-plus"></i></a>
+                    </div>
+                    <!-- Author Text -->
+                    <div class="author-text text-center">
+                        终于是搭好了，感谢每一位来访者的到来，在这里我将发布我的最新动向，不足之处还请多指点😄
+                    </div>
+                </div>
+                <!-- End of Widget Content -->
+            </div>
+            <!-- End of Author Widget -->
+
+            <!-- Recent Post Widget -->
+            <div class="widget widget-recent-post">
+                <!-- Widget Title -->
+                <h4 class="widget-title">
+                    推荐
+                </h4>
+                <!-- End of Widget Title -->
+
+                <!-- Widget Content -->
+                {% for post in recommend_list %}
+                    <div class="widget-content">
+                        <!-- Single Post -->
+                        <div class="wrp-cover">
+                            <!-- Post Title -->
+                            <div class="post-title">
+                                <a href="{{ post.link }}">{{ post.title }}</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                <!-- End of Widget Content -->
+            </div>
+            <!-- End of Recent Post Widget -->
+
+
+            <!-- Tags Cloud Widget -->
+            <div class="widget widget-tag-cloud">
+                <!-- Widget Title -->
+                <h4 class="widget-title">
+                    Tags
+                </h4>
+                <!-- End of Widget Title -->
+
+                <!-- Widget Content -->
+                <div class="widget-content tagcloud">
+                    {% for tag in tag_list %}
+                        <a href="{% url "myblog:tag" %}?id={{ tag.id }}">{{ tag.name }}</a>
+                    {% endfor %}
+                </div>
+                <!-- End of Widget Content -->
+            </div>
+            <!-- End of Tags Cloud Widget -->
+        </div>
+    </div>
+</div>

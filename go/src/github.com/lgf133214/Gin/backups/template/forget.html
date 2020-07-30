@@ -1,0 +1,61 @@
+{{template "header" .}}
+<div class="container container-404 text-center d-flex align-items-center">
+    <div class="data">
+        <h2 id="msg">输入您的邮箱地址</h2>
+        <div class="input-group">
+            <input type="text" class="form-control email" placeholder="Your Email">
+            <div class="input-group-append">
+                <button class="btn" style="background-color: #fff;"><< GO >></button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var reg = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/;
+    $(function () {
+        $(".btn").on('click', function () {
+            if ($(".email").val() == "") {
+                $("#msg").html('地址不能为空！');
+            } else if (!reg.test($(".email").val())) {
+                $("#msg").html('邮箱输入格式有误，请检查后重新输入');
+            } else {
+                $("#msg").html('处理中，请稍等。。。');
+                $.ajax({
+                    type: "POST",
+                    url: "/reset",
+                    data: {
+                        email: $(".email").val(),
+                    },
+                    dataType: "JSON",
+                    success: function (data) {
+                        if (data['status'] == "ok") {
+                            var InterValObj; //timer变量，控制时间
+                            var count = 3; //间隔函数，1秒执行
+                            var curCount;//当前剩余秒数
+
+                            curCount = count;
+                            InterValObj = window.setInterval(SetRemainTime, 1000); //启动计时器，1秒执行一次
+
+
+                            //timer处理函数
+                            function SetRemainTime() {
+                                if (curCount == 0) {
+                                    window.clearInterval(InterValObj);//停止计时器
+                                    window.location = "/";
+                                } else {
+                                    curCount--;
+                                    $("#msg").html(data['msg'] + "  " + curCount + " 秒后跳转至首页");
+                                }
+                            }
+                        } else {
+                            $("#msg").html(data['msg']);
+                        }
+                    }, error: function () {
+                        $("#msg").html("出错了，等会儿试试看吧");
+                    }
+                });
+            }
+        })
+    })
+</script>
+{{template "footer" .}}

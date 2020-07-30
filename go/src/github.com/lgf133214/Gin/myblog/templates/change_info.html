@@ -1,0 +1,372 @@
+{% load cus_tags %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="ch">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1, minimum-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>个人信息修改</title>
+    <link rel="icon" href="{% static 'images/favicon.png' %}">
+    <style>
+
+        img {
+            border: 0;
+        }
+
+        body {
+            background: #f7f7f7;
+            color: #666;
+            font: 12px/150% Arial, Verdana, "microsoft yahei";
+        }
+
+        html, body, div, dl, dt, dd, ol, ul, li, h1, h2, h3, h4, h5, h6, p, blockquote, pre, button, fieldset, form, input, legend, textarea, th, td {
+            margin: 0;
+            padding: 0;
+        }
+
+        article, aside, details, figcaption, figure, footer, header, main, menu, nav, section, summary {
+            display: block;
+            margin: 0;
+            padding: 0;
+        }
+
+        audio, canvas, progress, video {
+            display: inline-block;
+            vertical-align: baseline;
+        }
+
+        a {
+            text-decoration: none;
+            color: #08acee;
+        }
+
+        a:active, a:hover {
+            outline: 0;
+        }
+
+        button {
+            outline: 0;
+        }
+
+        mark {
+            color: #000;
+            background: #ff0;
+        }
+
+        small {
+            font-size: 80%;
+        }
+
+        img {
+            border: 0;
+        }
+
+        button, input, optgroup, select, textarea {
+            margin: 0;
+            font: inherit;
+            color: inherit;
+            outline: none;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        i {
+            font-style: normal;
+        }
+
+        a {
+            color: #333;
+        }
+
+        a:hover {
+            color: #bbb;
+        }
+
+        em {
+            font-style: normal;
+        }
+
+        h2, h3 {
+            font-weight: 100;
+        }
+
+
+        /* ------------------- */
+        ::-moz-placeholder {
+            color: #9fa3a7;
+        }
+
+        ::-webkit-input-placeholder {
+            color: #9fa3a7;
+        }
+
+        :-ms-input-placeholder {
+            color: #9fa3a7;
+        }
+
+
+        .pc-kk-form {
+            padding: 15px 20px;
+        }
+
+        .pc-kk-form-list {
+            background: #fff;
+            border: 1px solid #e5e5e5;
+            border-radius: 5px;
+            height: 44px;
+            line-height: 44px;
+            margin-bottom: 10px;
+        }
+
+        .pc-kk-form-list input {
+            width: 100%;
+            border: none;
+            background: none;
+            color: #9fa3a7;
+            font-size: 14px;
+            height: 36px;
+            padding: 4px 10px;
+        }
+
+        .pc-kk-form-list textarea {
+            background: none;
+            border: none;
+            height: 60px;
+            padding: 10px;
+            resize: none;
+            width: 94%;
+            line-height: 22px;
+            color: #9fa3a7;
+            font-size: 14px;
+        }
+
+
+        .nice-select ul {
+            width: 100%;
+            display: none;
+            position: absolute;
+            left: -1px;
+            top: 44px;
+            overflow: hidden;
+            background-color: #fff;
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid #b9bcbf;
+            z-index: 9999;
+            border-radius: 5px;
+
+        }
+
+        .nice-select ul li {
+            padding-left: 10px;
+        }
+
+        .nice-select ul li:hover {
+            background: #f8f4f4;
+        }
+
+        .pc-kk-form-list-clear {
+            background: none;
+            border: none;
+        }
+
+        .pc-kk-form-btn button {
+            background: #ec5224;
+            color: #fff;
+            border: none;
+            width: 100%;
+            height: 50px;
+            line-height: 50px;
+            font-size: 16px;
+            border-radius: 50px;
+        }
+
+        #file {
+            display: none;
+        }
+
+        .btn {
+            font-size: 16px;
+            font-weight: bold;
+            color: #999;
+            line-height: 32px;
+        }
+
+        .btn:hover, .cursor:hover {
+            cursor: pointer;
+        }
+
+        .nice-select {
+            position: relative;
+            background: #fff url({% static 'images/a2.jpg' %}) no-repeat right center;
+            background-size: 18px;
+            width: 47%;
+            float: left;
+            border: 1px solid #e5e5e5;
+            border-radius: 5px;
+            height: 44px;
+            line-height: 44px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="pc-kk-form">
+    <form action="{% url 'myblog:profile_modify' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div style="height: 70px;text-align: center">
+            <img src="{{ user.cover | cover_url }}" id="show" width="50px">
+            <input type="file" name="cover" accept="image/*" id="file" onchange="changepic(this)">
+            <label for="file" class='btn'>上传头像</label>
+        </div>
+
+        <div class="pc-kk-form-list">
+            <input type="text" placeholder="用户名：{{ user.username }}" name="username" id="username">
+        </div>
+        <div id="msg"></div>
+        <div class="pc-kk-form-list">
+            <input type="text" placeholder="昵称：{{ user.nick_name }}" name="nickname">
+        </div>
+        <div class="pc-kk-form-list pc-kk-form-list-clear">
+            <div class="nice-select">
+                <input type="text" placeholder="年龄：{{ user.age }}" name="age" class="cursor" readonly>
+                <ul>
+                    {% for i in 70|get_range %}
+                        <li data-value="{{ i }}">{{ i }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="nice-select" style="float:right">
+                <input type="text" placeholder="性别：{{ user.sex}}" name="sex" class="cursor" readonly>
+                <ul>
+                    <li data-value="男">男</li>
+                    <li data-value="女">女</li>
+                    <li data-value="保密">保密</li>
+                </ul>
+
+            </div>
+        </div>
+        <div class="pc-kk-form-list" style="height:auto">
+            <textarea placeholder="格言：{{ user.quote }}" name="quote"></textarea>
+        </div>
+
+        <div class="pc-kk-form-list">
+            <input type="text" placeholder="格言出处：{{ user.quote_author }}" name="quote_author">
+        </div>
+        <div class="pc-kk-form-list" style="height:auto">
+            <textarea placeholder="个人简介：{{ user.personal_profile }}" name="personal_profile"></textarea>
+        </div>
+
+        <div class="pc-kk-form-btn">
+            <button id="submit" class="cursor">Submit</button>
+        </div>
+        <div style="height: 20px;"></div>
+        <div class="pc-kk-form-btn">
+            <button type="button" class="cursor" id="email">点我去修改邮箱</button>
+        </div>
+    </form>
+</div>
+
+<div style="text-align:center;margin:10px 0; font:normal 14px/24px 'MicroSoft YaHei';">
+<p><a href="/" target="_self">回首页</a></p>
+</div>
+<script type="text/javascript" src="{% static 'js/jquery-1.12.1.min.js' %}"></script>
+<script>
+    $.ajaxSetup({
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+    });
+    $("#email").click(function () {
+        window.location.href = {% url 'myblog:change_email' %};
+    });
+
+    function changepic() {
+
+        var reads = new FileReader();
+
+        f = document.getElementById('file').files[0];
+
+        reads.readAsDataURL(f);
+
+        reads.onload = function (e) {
+
+            document.getElementById('show').src = this.result;
+
+        };
+
+    }
+
+
+    $(".nice-select").click(function (e) {
+
+        $(".nice-select").find('ul').hide();
+
+        $(this).find('ul').show();
+
+        e.stopPropagation();
+
+    });
+
+    $(".nice-select li").hover(function (e) {
+
+        $(this).toggleClass('on');
+
+        e.stopPropagation();
+
+    });
+
+    $(".nice-select li").click(function (e) {
+
+        var val = $(this).text();
+
+        $(this).parents(".nice-select").find('input').val(val);
+
+        $(".nice-select ul").hide();
+
+        e.stopPropagation();
+
+    });
+
+    $(document).click(function () {
+
+        $("nice-select ul").hide();
+
+    });
+    var status = 1;
+    $("#username").blur(function () {
+        $.ajax({
+            type: "POST",
+            url: "{% url 'myblog:username_val' %}",
+            data: {
+                username: $("#username").val()
+            },
+            async: false,
+            dataType: "JSON",
+            success: function (data) {
+                status = data['status'];
+                $("#msg").html(data['msg']);
+            },
+            error: function (data) {
+                $("#msg").html('出错了，等等再试吧');
+            }
+        });
+    });
+    $("#submit").click(function () {
+        if (status == 1) {
+            $("form").submit();
+        } else {
+            $("#msg").html('请重新填写用户名');
+            return false
+        }
+    });
+
+</script>
+
+</body>
+</html>

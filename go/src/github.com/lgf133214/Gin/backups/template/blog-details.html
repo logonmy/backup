@@ -1,0 +1,139 @@
+﻿{{/*todo 美化，布局/内容修改*/}}
+{{template "header" .}}
+    <!-- Page title -->
+    <div class="page-title">
+        <div class="container">
+            <h2>Blog Details: Full Width</h2>
+            <ul class="nav">
+                <li><a href="/">主页</a></li>
+                <li><a href="/category/{{.Post.Category.Id}}">{{.Post.Category.Category}}</a></li>
+                <li>最后修改：{{.Post.ModTime | .getFmtTime}}</li>
+            </ul>
+        </div>
+    </div>
+    <!-- End of Page title -->
+
+    <div class="container pb-120">
+        <div class="row">
+            <div class="col-md-10 offset-md-1">
+                <div class="post-details-cover post-has-full-width-image">
+                    <!-- Post Thumbnail -->
+                    <div class="post-thumb-cover">
+                        <!-- Post Meta Info -->
+                        <div class="post-meta-info">
+                            <!-- Category -->
+                            <p class="cats">
+                                <a href="/category/{{.Post.Category.Id}}">{{.Post.Category.Category}}</a>
+                            </p>
+
+                            <!-- Title -->
+                            <div class="title">
+                                <h2>{{.Post.Title}}</h2>
+                            </div>
+
+                            <!-- Meta -->
+                            <ul class="nav meta align-items-center">
+                                <li class="meta-author">
+                                    <img src="/assets/images/blog/author.jpg" alt="" class="img-fluid">
+                                    <a href="javascript:void(0);">Alex Garry</a>
+                                </li>
+                                <li class="meta-date"><a href="javascript:void(0);">发布时间：{{.Post.PubTime|.getFmtTime}}</a></li>
+                                <li>views:{{.Post.Views}}</li>
+                                <li class="meta-comments"><a href="javascript:void(0);"><i class="fa fa-comment"></i>{{len .Post.Comments}}</a></li>
+                            </ul>
+                        </div>
+                        <!-- End of Post Meta Info -->
+                    </div>
+                    <!-- End oF Post Thumbnail -->
+
+                    <!-- Post Content -->
+                    <div class="post-content-cover my-drop-cap">
+                        {{.Post.Content}}
+                    </div>
+                    <!-- End of Post Content -->
+
+                    <!-- Tags -->
+                    <div class="post-all-tags">
+                        {{range .Post.Tags}}
+                        <a href="/tag/{{.Id}}">{{.Tag}}</a>
+                            {{end}}
+                    </div>
+                    <!-- End of Tags -->
+
+                    <!-- Author Box -->
+                    <div class="post-about-author-box">
+                        <div class="author-avatar">
+                            <img src="/assets/images/blog/author.jpg" alt="" class="img-fluid">
+                        </div>
+                        <div class="author-desc">
+                            <h5> <a href="javascript:void(0);"> Alex Garry </a> </h5>
+                            <div class="description">
+                                On recommend tolerably my belonging or am. Mutual has cannot beauty indeed now sussex merely you. It possible no husbands jennings ye offended packages pleasant he.
+                            </div>
+                            <div class="social-icons">
+                                <a href="javascript:void(0);"><i class="fa fa-facebook"></i></a>
+                                <a href="javascript:void(0);"><i class="fa fa-twitter"></i></a>
+                                <a href="javascript:void(0);"><i class="fa fa-instagram"></i></a>
+                                <a href="javascript:void(0);"><i class="fa fa-pinterest"></i></a>
+                                <a href="javascript:void(0);"><i class="fa fa-linkedin"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End of Author Box -->
+                    
+                    <!-- Comments -->
+                    <button class="btn btn-comment" type="button" data-toggle="collapse" data-target="#commentToggle" aria-expanded="false" aria-controls="commentToggle">
+                        Hide Comments ({{len .Post.Comments}})
+                    </button>
+
+                    <div class="collapse show" id="commentToggle">
+                        <ul class="post-all-comments">
+                            <li class="single-comment-wrapper">
+{{/*                                todo comment*/}}
+                                <!-- Single Comment -->
+                                <div class="single-post-comment">
+                                    <!-- Author Image -->
+                                    <div class="comment-author-image">
+                                        <img src="/assets/images/blog/post/author-1.jpg" alt="" class="img-fluid">
+                                    </div>
+                                    <!-- Comment Content -->
+                                    <div class="comment-content">
+                                        <div class="comment-author-name">
+                                            <h6>Don Norman</h6> <span> 5 Jan 2019 at 6:40 pm </span>
+                                        </div>
+                                        <p>On recommend tolerably my belonging or am. Mutual has cannot beauty indeed now back sussex merely you. It possible no husbands jennings offended.</p>
+                                        <a href="javascript:void(0);" class="reply-btn">Reply</a>
+                                    </div>
+                                </div>
+                                <!-- End of Single Comment -->
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- End of Comments -->
+
+                    <!-- Comment Form -->
+                    <div class="post-comment-form-cover">  
+                        <h3>Write your comment</h3>
+                        <form class="comment-form">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" placeholder="Name">
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" placeholder="Email">
+                                </div>
+                                <div class="col-md-12">
+                                    <textarea class="form-control" placeholder="Write your comment"></textarea>
+                                </div>
+                                <div class="col-md-12">
+                                    <button class="btn btn-primary">Submit </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- End of Comment Form -->
+                </div>
+            </div>
+        </div>
+    </div>
+{{template "footer" .}}

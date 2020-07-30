@@ -1,0 +1,128 @@
+﻿{{/*todo 友链推荐*/}}
+{{/*todo 有数据后修改布局样式*/}}
+{{template "header" .}}
+<!-- post with sidebar -->
+<div class="container pt-40 pb-90">
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Popular Post -->
+            <section class="popular-post pb-10">
+                <!-- Section title -->
+                <div class="section-title">
+                    <h2>Recent Posts</h2>
+                </div>
+                <!-- End of Section title -->
+
+                <div class="post-blog-list">
+                    {{range .Posts}}
+                        <!-- Post -->
+                        <div class="post-default post-has-right-thumb">
+                            <div class="d-flex flex-wrap">
+                                <div class="post-thumb align-self-stretch order-md-2">
+                                    <a href="/view/{{.Id}}">
+                                        <div data-bg-img="/assets/images/blog/default.jpg"></div>
+                                    </a>
+                                </div>
+                                <div class="post-data order-md-1">
+                                    <!-- Category -->
+                                    <div class="cats"><a
+                                                href="/category/{{.Category.Id}}">{{.Category.Category}}</a>
+                                    </div>
+                                    <!-- Title -->
+                                    <div class="title">
+                                        <h2><a href="/view/{{.Id}}">{{.Title}}</a></h2>
+                                    </div>
+                                    <!-- Post Meta -->
+                                    <ul class="nav meta align-items-center">
+                                        <li class="meta-author">
+                                            <img src="/assets/images/blog/author.jpg" alt="" class="img-fluid">
+                                            <a href="javascript:void(0);">Alex Garry</a>
+                                        </li>
+                                        <li class="meta-date"><a
+                                                    href="javascript:void(0);">{{.PubTime | .getFmtTime}}</a></li>
+                                        <li class="meta-comments"><a href="javascript:void(0);"><i
+                                                        class="fa fa-comment"></i>{{len .Comments}}</a></li>
+                                    </ul>
+                                    <!-- Post Desc -->
+                                    <div class="desc">
+                                        <p>
+                                            {{.Content|.getDesc}}
+                                        </p>
+                                    </div>
+                                    <!-- Read More Button -->
+                                    <a href="/view/{{.Id}}" class="btn btn-primary">View More</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End of Post -->
+                    {{end}}
+                </div>
+            </section>
+            <!-- End of Popular Post  -->
+        </div>
+        <div class="col-lg-4">
+            <div class="pt-88">
+                <div class="my-sidebar">
+
+                    <!-- Select Category -->
+                    <div class="widget widget-select-category">
+                        <!-- Widget Content -->
+                        <div class="widget-content">
+                            <!-- Select -->
+                            <select>
+                                <option selected value="1">最近发布</option>
+                                <option value="2">浏览最多</option>
+                            </select>
+                        </div>
+                        <!-- End of Widget Content -->
+                    </div>
+                    <!-- End of Select Category -->
+
+                    <!-- Author Widget -->
+                    <div class="widget widget-about">
+                        <!-- Widget Content -->
+                        <div class="widget-content">
+                            <!-- Author Image -->
+                            <div class="author-image">
+                                <img src="/assets/images/blog/author.jpg" alt="" class="img-fluid">
+                            </div>
+                            <!-- Author Name -->
+                            <div class="author-name text-center">
+                                <a href="javascript:void(0);"> Alex Garry </a>
+                            </div>
+                            <!-- Author Social Links -->
+                            <div class="author-social text-center">
+                                <a href="javascript:void(0);"><i class="fa fa-google-plus"></i></a>
+                            </div>
+                            <!-- Author Text -->
+                            <div class="author-text text-center">
+                                菜鸡
+                            </div>
+                        </div>
+                        <!-- End of Widget Content -->
+                    </div>
+                    <!-- End of Author Widget -->
+                    <!-- Tags Cloud Widget -->
+                    <div class="widget widget-tag-cloud">
+                        <!-- Widget Title -->
+                        <h4 class="widget-title">
+                            Tags
+                        </h4>
+                        <!-- End of Widget Title -->
+
+                        <!-- Widget Content -->
+                        <div class="widget-content tagcloud">
+                            {{range .getTags}}
+                                <a href="/tag/{{.Id}}">{{.Tag}}</a>
+                            {{end}}
+                        </div>
+                        <!-- End of Widget Content -->
+                    </div>
+                    <!-- End of Tags Cloud Widget -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end of post with sidebar -->
+{{template "footer" .}}

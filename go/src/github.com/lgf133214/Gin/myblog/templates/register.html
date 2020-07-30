@@ -1,0 +1,75 @@
+{% extends 'login.html' %}
+{% block cus_style %}
+
+    .logo-box {
+    height: 440px !important;
+    }
+
+{% endblock %}
+{% load static %}
+{% block title %}注册{% endblock %}
+{% block btn %}注册{% endblock %}
+{% block custom %}
+    <div class="bxs-row">
+        <input type="text" class="email" id="email" placeholder="邮箱">
+        <p class=" err err-email"></p>
+    </div>
+{% endblock %}
+{% block fill %}
+        else if (!$(".email").val()) {
+            $(".tips").html('喂！？？我去哪找你？！！');
+            $("#logo").attr("src", "{% static 'images/login/null-password.jpg' %}")
+        }else if(!reg.test($(".email").val())) {
+            $(".tips").html('唬谁呢？？给我重填邮箱去！！！');
+            $("#logo").attr("src", "{% static 'images/login/null-password.jpg' %}")
+        }
+{% endblock %}
+{% block post %}
+    $.ajaxSetup({
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            });
+    $(".tips").html("处理中，请稍等。。。");
+    $(".err-username").html("");
+    $.ajax({
+    type: "POST",
+    url: "{% url 'myblog:register' %}",
+    data: {
+    username: $("#uname").val(),
+    password: $("#passwd").val(),
+    email: $("#email").val()
+    },
+    dataType: "JSON",
+    success: function (data) {
+        if (data['id'] == '0'){
+            $(".err-username").html(data['error_msg']);
+            $(".tips").html(data['tip']);
+        } else if (data['id'] == '1'){
+            $(".err-username").html('');
+            var InterValObj; //timer变量，控制时间
+                var count = 3; //间隔函数，1秒执行
+                var curCount;//当前剩余秒数
+
+                curCount = count;
+                var dealType; //验证方式
+                InterValObj = window.setInterval(SetRemainTime, 1000); //启动计时器，1秒执行一次
+
+
+                //timer处理函数
+                function SetRemainTime() {
+                    if (curCount == 0) {
+                        window.clearInterval(InterValObj);//停止计时器
+                        window.location = "{% url 'myblog:index' %}";
+                    } else {
+                        curCount--;
+                        $(".tips").html(data['error_msg'] + "<br>" + curCount + " 秒后跳转至首页");
+                    }
+                }
+
+    }
+    }, error: function () {
+        $(".tips").html('出错了， 等会儿试试看吧');
+        $("#logo").attr("src", "{% static 'images/login/login-err.png' %}")
+    }
+    });
+{% endblock %}
+{% block foot %}<a href="{% url 'myblog:login' %}" target="_self">已有账号？->登录</a>{% endblock %}

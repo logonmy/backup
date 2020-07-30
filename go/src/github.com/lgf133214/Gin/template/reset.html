@@ -1,0 +1,58 @@
+{{template "header" .}}
+<div class="container container-404 text-center d-flex align-items-center">
+    <div class="data">
+        <h2 id="msg">输入您的新密码</h2>
+        <div class="input-group">
+            <input type="text" class="form-control pd" placeholder="Your New Password">
+            <div class="input-group-append">
+                <button class="btn" style="background-color: #fff;"><< GO >></button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="http://cdn.bootcss.com/blueimp-md5/1.1.0/js/md5.min.js"></script>
+<script>
+    $(function () {
+        $(".btn").on('click', function () {
+            if (!$(".pd").val()) {
+                $("#msg").html('密码不能为空！');
+            } else {
+                $("#msg").html('修改中，请稍等。。。');
+                $.ajax({
+                    type: "POST",
+                    url: "/reset/pw",
+                    data: {
+                        password: md5($(".pd").val()),
+                        session: "{{ .Session }}",
+                    },
+                    dataType: "JSON",
+                    success: function (data) {
+                        var InterValObj; //timer变量，控制时间
+                        var count = 3; //间隔函数，1秒执行
+                        var curCount;//当前剩余秒数
+
+                        curCount = count;
+                        InterValObj = window.setInterval(SetRemainTime, 1000); //启动计时器，1秒执行一次
+
+
+                        //timer处理函数
+                        function SetRemainTime() {
+                            if (curCount == 0) {
+                                window.clearInterval(InterValObj);//停止计时器
+                                window.location = "/login";
+                            } else {
+                                curCount--;
+                                $("#msg").html(data['msg'] + "  " + curCount + " 秒后跳转至登录页");
+                            }
+                        }
+                    }, error: function (data) {
+                        $("#msg").html(data['msg']);
+                    }
+                });
+            }
+        })
+    })
+</script>
+{{template "footer" .}}
+
+

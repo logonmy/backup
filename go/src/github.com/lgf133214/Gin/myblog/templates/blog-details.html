@@ -1,0 +1,276 @@
+{% extends 'base.html' %}
+{% load cus_tags %}
+{% block banner %}{% endblock %}
+{% block main %}
+    <!-- Page title -->
+    <div class="page-title">
+        <div class="container">
+            <h2>{{ post.title }}</h2>
+            <ul class="nav">
+                <li><a href="{% url 'myblog:index' %}">Home</a></li>
+                <li><a href="{% url 'myblog:category' %}?id={{ post.category.id }}">{{ post.category.name }}</a>
+                </li>
+                <li>作者：{{ post.user.nick_name }}</li>
+            </ul>
+        </div>
+    </div>
+    <!-- End of Page title -->
+
+    <div class="container pt-120">
+        <div class="row">
+            <div class="col-lg-8 pb-80">
+                <div class="post-details-cover">
+                    <!-- Post Thumbnail -->
+                    <div class="post-thumb-cover">
+                        <div class="post-thumb" style="text-align: center">
+                            <img src="{{ post.cover | cover_url }}" alt="" class="img-fluid" width="500px">
+                        </div>
+                        <!-- Post Meta Info -->
+                        <div class="post-meta-info">
+                            <!-- Category -->
+                            <p class="cats">
+                                <a href="{% url 'myblog:category' %}?id={{ post.category.id }}">{{ post.category.name }}</a>
+                            </p>
+
+                            <!-- Title -->
+                            <div class="title">
+                                <h2>{{ post.title }}</h2>
+                            </div>
+
+                            <!-- Meta -->
+                            <ul class="nav meta align-items-center">
+                                <li class="meta-author">
+                                    <img src="{{ post.user.cover | cover_url }}" alt="" class="img-fluid">
+
+                                    <a href="javascript:void(0);">{{ post.user.nick_name }}</a>
+                                </li>
+                                <li class="meta-date">发布日期：{{ post.pub_date|date:"Y-m-d" }}</li>
+                                <li>最近修改：{{ post.update_date|date:"Y-m-d" }}</li>
+                                <li class="meta-comments"><a href="#com"><i
+                                        class="fa fa-comment"></i> {{ post.comment_set.count }}
+                                </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- End of Post Meta Info -->
+                    </div>
+                    <!-- End oF Post Thumbnail -->
+
+                    <!-- Post Content -->
+                    <div class="post-content-cover my-drop-cap" >
+                        <p>
+                            {% autoescape on %}
+                                {{ post.content | img_size:"100px" | add_class_img}}
+                            {% endautoescape %}
+
+                        </p>
+                        <hr>
+                        <p style="text-align:center;font-size:30px">The End</p>
+                        <blockquote>
+                            <p>
+                                {{ post.user.quote }}
+                            </p>
+                            <cite>{{ post.user.quote_author }}</cite>
+                        </blockquote>
+
+                    </div>
+                    <!-- End of Post Content -->
+
+                    <!-- Tags -->
+                    <div class="post-all-tags">
+                        {% for tag in post.tags.all %}
+                            <a href="{% url 'myblog:tag' %}?id={{ tag.id }}" style="z-index: 999;
+    position: relative;">{{ tag.name }}</a>
+                        {% endfor %}
+
+                    </div>
+                    <!-- End of Tags -->
+
+                    <!-- Author Box -->
+                    <div class="post-about-author-box">
+                        <div class="author-avatar">
+                            <img src="{{ post.user.cover | cover_url }}" alt="" class="img-fluid">
+
+                        </div>
+                        <div class="author-desc">
+                            <h5><a href="javascript:void(0);"> {{ post.user.nick_name }} </a>
+                            </h5>
+                            <div class="description">
+                                {{ post.user.personal_profile }}
+                            </div>
+                            <div class="social-icons">
+                                email：{{ post.user.email }}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End of Author Box -->
+
+                    <!-- Comments -->
+                    <button class="btn btn-comment" type="button" data-toggle="collapse" data-target="#commentToggle"
+                            aria-expanded="false" aria-controls="commentToggle" id="com">
+                        Comments ({{ post.comment_set.count }})
+                    </button>
+
+                    <div class="collapse show" id="commentToggle">
+                        <ul class="post-all-comments">
+                            <li class="single-comment-wrapper">
+                                <!-- Single Comment -->
+                                {% for comment in post.comment_set.all %}
+                                    <div class="single-post-comment">
+                                        <!-- Author Image -->
+                                        <div class="comment-author-image">
+                                            <img src="{{ comment.user.cover | cover_url }}" alt="" class="img-fluid"
+                                                 width="60px">
+                                        </div>
+                                        <!-- Comment Content -->
+                                        <div class="comment-content">
+                                            <div class="comment-author-name">
+                                                <h6>{{ comment.user.nick_name }}</h6>
+                                                <span> {{ comment.pub_date }} </span>
+                                            </div>
+                                            <p>{{ comment.content }}</p>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                <!-- End of Single Comment -->
+
+                            </li>
+
+                        </ul>
+                    </div>
+                    <!-- End of Comments -->
+                    <!-- Comment Form -->
+                    <div class="post-comment-form-cover">
+                        <h3>Write your comment</h3>
+                        <p style="color: red" id="msg"></p>
+                        <form class="comment-form" action="{% url "myblog:comment_sub" %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="post_id" value="{{ post.id }}">
+                            <div class="row">
+                                {% if user.is_authenticated %}
+                                    <div class="col-md-12">
+                                <textarea class="form-control" id="comment" name="comment"
+                                          placeholder="Write your comment"></textarea>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <button class="btn btn-primary" id="submit">Submit</button>
+                                    </div>
+                                {% else %}
+                                    <div class="col-md-12">
+                                        <input type="text" class="form-control" id="email" name="email"
+                                               placeholder="Email">
+                                    </div>
+                                    <div class="col-md-12">
+                                <textarea class="form-control" id="comment" name="comment"
+                                          placeholder="Write your comment (请先登录或填写已经注册并激活过的邮箱，否则无法完成评论)"></textarea>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <button class="btn btn-primary" id="submit">Submit</button>
+                                    </div>
+                                {% endif %}
+
+                            </div>
+                        </form>
+                    </div>
+                    <!-- End of Comment Form -->
+                </div>
+            </div>
+            {% include 'slide.html' %}
+        </div>
+    </div>
+    <div id="outerdiv" style="text-align: center;position: fixed;z-index: 1000;top: 0;left: 0;
+    width: 100%;height: 100%;background-color: rgba(255,255,255,.9);">
+        <img id="bigimg" style="height: auto;width: 46.6325%;border: 0;
+        margin: auto;position: absolute;top: 0;bottom: 0;left: 0;right: 0;" src=""/>
+    </div>
+{% endblock %}
+{% block cus_script %}
+    <script>
+        //图片放大
+        $("#outerdiv").hide();
+        $(function () {
+            $(".img").mouseover(function () {
+                $(this).css("cursor", "pointer");
+            });
+
+            $(".img").click(function () {
+                var _this = $(this);//将当前的pimg元素作为_this传入函数
+                imgShow("#outerdiv", "#bigimg", _this);
+            });
+        });
+
+        function imgShow(outerdiv, bigimg, _this) {
+            var src = _this.attr("src");//获取当前点击的pimg元素中的src属性
+            $('#outerdiv').attr('display', 'block');
+            $(bigimg).attr("src", src);//设置#bigimg元素的src属性
+            $(outerdiv).fadeIn("fast");
+
+            $(outerdiv).click(function () {//再次点击淡出消失弹出层
+                $(this).fadeOut("fast");
+            });
+        }
+
+
+
+        {% if not user.is_authenticated %}
+            var reg = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/;
+            $(function () {
+                    var arrayObj = [0, 0];
+                    $.ajaxSetup({
+                        data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+                    });
+                    $("#email").blur(function () {
+                        var email = $("#email").val();
+                        if (reg.test(email)) {
+                            $("#msg").html("请稍等。。。");
+                            $.ajax({
+                                type: "POST",
+                                url: "{% url 'myblog:email_val' %}",
+                                data: {
+                                    email: $("#email").val()
+                                },
+                                dataType: "JSON",
+                                success: function (data) {
+                                    arrayObj[0] = data['status'];
+                                    $("#msg").html(data['msg']);
+                                }, error: function () {
+                                    $("#msg").html('出错了， 等会儿试试看吧');
+                                }
+                            })
+                        } else {
+                            $("#msg").html("邮箱格式错误");
+                        }
+                    })
+                    ;
+                    $("#comment").blur(function () {
+                        var comment = $("#comment").val();
+                        if (comment && $.trim(comment)) {
+                            arrayObj[1] = 1;
+                        } else {
+                            $("#msg").html("评论不能为空！");
+                        }
+                    });
+                    $('#submit').click(function () {
+                        if (arrayObj[0] + arrayObj[1] == 2) {
+                            $('form').submit();
+                        } else {
+                            $("#msg").html("咋不按套路来呢？");
+                            return false
+                        }
+                    });
+                }
+            );
+        {% else %}
+            $('#submit').click(function () {
+                var comment = $("#comment").val();
+                if (comment && $.trim(comment)) {
+                    $("form").submit();
+                } else {
+                    $("#msg").html("评论不能为空！");
+                    return false
+                }
+            });
+        {% endif %}
+    </script>
+{% endblock %}
+{% block subscript %}{% endblock %}

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ch">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <style>
+        #chat-container {
+            top: 100px;
+            left: 100px;
+            margin: 0 auto;
+            border-radius: 8px;
+            box-shadow: 0 0 0 -20px rgba(0, 0, 0, .2), 0 24px 38px 3px rgba(0, 0, 0, .14), 0 9px 46px 8px rgba(0, 0, 0, .12);
+            position: fixed;
+            background: rgba(255, 255, 255, 0.95);
+            width: 150px;
+            max-height: 100px;
+            overflow: scroll;
+            opacity: 40%;
+            z-index: 999999999;
+        }
+
+        #chat-container div li p,
+        #chat-container div input {
+            font-weight: 100;
+            padding: 0;
+            margin: 0;
+        }
+
+        #chat-container div input {
+            border-width: 0;
+        }
+
+        #chat-container div input:focus {
+            outline: none;
+        }
+
+        #chat-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        #chat-container div li {
+            list-style: none
+        }
+
+        .chat-right p {
+            text-align: right;
+        }
+
+        .chat-left p {
+            text-align: left;
+        }
+
+        [v-cloak] {
+            display: none
+        }
+    </style>
+</head>
+
+<body>
+<div id="chat-container" @mousedown="move" v-cloak v-show="show">
+    <div>
+        <li v-for="item in dataList" :class="{'chat-right':item.send,  'chat-left':!item.send}">
+            <p>{{item.msg}}</p>
+        </li>
+    </div>
+    <div style="text-align: center;">
+        <input type="text" v-model="msg" :placeholder="tips" @keypress.enter="send"
+               style="width: 100%;text-align: center;">
+    </div>
+</div>
+</body>
+<script>
+    // f12 测试使用
+    // setInterval(()=>{app.msg="test";app.send()}, 3000)
+    /*
+    自定义格式方法：
+        1、修改显示消息的 p 标签内容，<p>{ {item.msg} }</p>
+        2、修改 send 方法,修改发送的 data 对象
+        * 自定义的字段可以写在 vue 的数据段 data 中，如昵称等
+     */
+
+    document.addEventListener("keypress", function (ev) {
+        switch (ev.key) {
+            case "~":
+                if (!window.top.chatapp)
+                    window.top.chatapp = new Vue({
+                        el: "#chat-container",
+                        mounted: function () {
+                            this.ws = new WebSocket("wss://your_domain:8849/chat")
+                            this.ws.onopen = () => {
+                                this.tips = "连接成功,在此输入"
+                            }
+                            this.ws.onerror = () => {
+                                this.tips = "发送失败"
+                            }
+                            this.ws.onmessage = (ev) => {
+                                let item = JSON.parse(ev.data);
+                                this.dataList.push(item)
+                            }
+                            // 10s检查一次ws状态
+                            setInterval(() => {
+                                if (this.ws.readyState > 1) {
+                                    this.ws = new WebSocket("wss://your_domain:8849/chat")
+                                    this.ws.onopen = () => {
+                                        this.tips = "连接成功,在此输入"
+                                    }
+                                    this.ws.onerror = () => {
+                                        this.tips = "发送失败"
+                                    }
+                                    this.ws.onmessage = (ev) => {
+                                        let item = JSON.parse(ev.data);
+                                        this.dataList.push(item)
+                                    }
+                                }
+                            }, 10000);
+                            // 5min发送一次心跳信息
+                            setInterval(() => {
+                                let data = {
+                                    msg: "beat",
+                                }
+                                this.ws.send(JSON.stringify(data))
+                            }, 1000 * 60 * 5)
+                        },
+                        // 新消息滚动值最下方
+                        updated: function () {
+                            let showContent = document.getElementById("chat-container");
+                            showContent.scrollTop = showContent.scrollHeight;
+                        },
+                        data: {
+                            ws: null,
+                            dataList: [],
+                            msg: "",
+                            positionX: 0,
+                            positionY: 0,
+                            tips: "",
+                            show: true,
+                        },
+                        methods: {
+                            send() {
+                                if (this.msg.trim() && this.ws) {
+                                    let data = {
+                                        msg: this.msg.trim(),
+                                    }
+                                    this.ws.send(JSON.stringify(data))
+                                    data['send'] = true
+                                    this.dataList.push(data)
+                                    this.msg = ""
+                                }
+                            },
+                            move(e) {
+                                let odiv = document.getElementById("chat-container");
+                                let disX = e.clientX - odiv.offsetLeft;
+                                let disY = e.clientY - odiv.offsetTop;
+                                document.onmousemove = (e) => {
+                                    let left = e.clientX - disX;
+                                    let top = e.clientY - disY;
+                                    this.positionX = top;
+                                    this.positionY = left;
+                                    odiv.style.left = left + 'px';
+                                    odiv.style.top = top + 'px';
+                                };
+                                document.onmouseup = () => {
+                                    document.onmousemove = null;
+                                    document.onmouseup = null;
+                                };
+                            },
+                        }
+                    })
+                else
+                    window.top.chatapp.show = !window.top.chatapp.show
+                break
+        }
+    })
+</script>
+<html>

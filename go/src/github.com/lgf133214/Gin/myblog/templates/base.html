@@ -1,0 +1,441 @@
+{% load static %}
+{% load cus_tags %}
+<!DOCTYPE html>
+<html lang="ch">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block title %}李高峰的Blog{% endblock %}</title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.png' %}">
+    {% block cus_head %}{% endblock %}
+
+    <!--==== Google Fonts ====-->
+    <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500%7CSpectral:400,400i,500,600,700"
+          rel="stylesheet">
+
+    <!-- CSS Files -->
+
+    <!--==== Bootstrap css file ====-->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+
+    <!--==== Font-Awesome css file ====-->
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+
+    <!--==== Animate CSS ====-->
+    <link rel="stylesheet" href="{% static 'plugins/animate/animate.min.css' %}">
+
+    <!--==== Owl Carousel ====-->
+    <link rel="stylesheet" href="{% static 'plugins/owl-carousel/owl.carousel.min.css' %}">
+
+    <!--==== Magnific Popup ====-->
+    <link rel="stylesheet" href="{% static 'plugins/magnific-popup/magnific-popup.css' %}">
+
+    <!--==== Style css file ====-->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <!--==== Responsive css file ====-->
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+
+    <!--==== Custom css file ====-->
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+
+</head>
+<body>
+<!-- Preloader -->
+<div class="preloader">
+    <div class="preload-img">
+        <div class="spinnerBounce">
+            <div class="double-bounce1"></div>
+            <div class="double-bounce2"></div>
+        </div>
+    </div>
+</div>
+<!-- End of Preloader -->
+<!-- Nav Search Box -->
+<div class="nav-search-box">
+    <form id="form_search" method="post" action="{% url 'myblog:search' %}">
+        {% csrf_token %}
+        <div class="input-group">
+            <input type="text" class="form-control" name="keyword" id="search" placeholder="eg. python django...">
+            <span class="b-line"></span>
+            <span class="b-line-under"></span>
+            <div class="input-group-append">
+                <button type="button" class="btn" id="search_btn">
+                    <img src="{% static 'images/search-icon.svg' %}" alt="" class="img-fluid svg">
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- End of Nav Search Box -->
+<!-- Header -->
+<header class="header">
+    <div class="header-fixed">
+        <div class="container-fluid pl-120 pr-120 position-relative">
+            <div class="row d-flex align-items-center">
+                <div class="col-lg-3 col-md-4 col-6">
+                    <!-- Logo -->
+                    <div class="logo">
+                        <a href="javascript:void(0);"><img src="{% static 'images/logo.png' %}" alt=""
+                                                           class="img-fluid"></a>
+                    </div>
+                    <!-- End of Logo -->
+                </div>
+
+                <div class="col-lg-9 col-md-8 col-6 d-flex justify-content-end position-static">
+                    <!-- Nav Menu -->
+                    <div class="nav-menu-cover">
+                        <ul class="nav nav-menu">
+                            <li><a href="{% url "myblog:index" %}">主页</a></li>
+                            <li><a href="{% url "myblog:about" %}">关于</a></li>
+                            <li class="menu-item-has-children"><a href="javascript:void(0)">分类</a>
+                                <ul class="sub-menu">
+                                    <li><a href="{% url "myblog:all" %}">全部文章</a></li>
+                                    {% for c in blogcategory_list %}
+                                        <li><a href="{% url "myblog:category" %}?id={{ c.id }}">{{ c.name }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                            <li><a href="{% url 'myblog:contact' %}">联系作者</a></li>
+
+                            {% if user.is_authenticated %}
+                                <li class="menu-item-has-children">
+                                    <a href="javascript:void(0)">管理</a>
+                                    <ul class="sub-menu">
+                                        <li><a href="{% url 'myblog:logout' %}">注销</a></li>
+                                        <li><a href="{% url 'myblog:passwd' %}">修改密码</a></li>
+                                        <li><a href="{% url 'myblog:change_info' %}">个人信息修改</a></li>
+                                        {% if user.is_staff %}
+                                            <li><a href="/feng_ge_66/blog/">后台管理</a></li>
+                                        {% endif %}
+                                    </ul>
+                                </li>
+                            {% else %}
+                                <li>
+                                    <a href="{% url 'myblog:login' %}">登录</a>
+                                </li>
+                            {% endif %}
+
+                        </ul>
+                    </div>
+                    <!-- End of Nav Menu -->
+
+                    <!-- Mobile Menu -->
+                    <div class="mobile-menu-cover">
+                        <ul class="nav mobile-nav-menu">
+                            <li class="search-toggle-open">
+                                <img src="{% static 'images/search-icon.svg' %}" alt="" class="img-fluid svg">
+                            </li>
+                            <li class="search-toggle-close hide">
+                                <img src="{% static 'images/close.svg' %}" alt="" class="img-fluid">
+                            </li>
+                            <li class="nav-menu-toggle">
+                                <img src="{% static 'images/menu-toggler.svg' %}" alt="" class="img-fluid svg">
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- End of Mobile Menu -->
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<!-- End of Header -->
+
+{% block banner %}
+    {% if banner_list %}
+        <!-- Banner -->
+        <div class="banner-slider-cover d-flex align-items-center">
+            <div class="container">
+                <div class="banner-slider owl-carousel">
+                    <!-- Banner Slide -->
+                    {% for banner in banner_list %}
+                        {% if banner.is_active %}
+                            <div class="banner-slide">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6 order-2 order-md-1">
+                                        <!-- Banner Text -->
+                                        <div class="banner-slide-text">
+                                            <p class="category"><a
+                                                    href="{% url 'myblog:category' %}?id={{ banner.category.id }}">{{ banner.category.name }}</a>
+                                            </p>
+                                            <h1>{{ banner.title }}</h1>
+                                            <p class="desc">{{ banner.content }}</p>
+                                            <a href="{{ banner.link_url }}" class="btn btn-primary">View More</a>
+                                        </div>
+                                        <!-- End of Banner Text -->
+                                    </div>
+                                    <div class="col-md-6 order-1 order-md-2">
+                                        <!-- Banner Image -->
+                                        <div class="banner-slide-image">
+                                            <img src="{{ banner.cover | cover_url }}" alt="" class="img-fluid">
+                                        </div>
+                                        <!-- End of Banner Image -->
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    <!-- End of Banner Slide -->
+                </div>
+
+                <!-- Banner Dots Slider -->
+                <div class="banner-slider-dots owl-carousel"></div>
+            </div>
+            <!-- End of Banner Dots Slider -->
+        </div>
+        <!-- End of Banner -->
+    {% endif %}
+{% endblock %}
+
+{% block main %}
+    {% if post_list %}
+        <!-- post with sidebar -->
+        <div class="container pt-40 pb-90">
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Popular Post -->
+                    <section class="popular-post pb-10">
+                        <!-- Section title -->
+                        <div class="section-title">
+                            <h2>Recent Posts</h2>
+                        </div>
+                        <!-- End of Section title -->
+
+                        <div class="post-blog-list">
+                            <!-- Post -->
+                            {% for post in post_list %}
+                                <div class="post-default post-has-right-thumb">
+                                    <div class="d-flex flex-wrap">
+                                        <div class="post-thumb align-self-stretch order-md-2">
+                                            <a href="/blog/{{ post.id }}">
+                                                <div data-bg-img="{{ post.cover | cover_url }}"></div>
+                                            </a>
+                                        </div>
+                                        <div class="post-data order-md-1">
+                                            <!-- Category -->
+                                            <div class="cats"><a
+                                                    href="{% url 'myblog:category' %}?id={{ post.category.id }}">{{ post.category.name }}</a>
+                                            </div>
+                                            <!-- Title -->
+                                            <div class="title">
+                                                <h2><a href="/blog/{{ post.id }}">{{ post.title }}</a>
+                                                </h2>
+                                            </div>
+                                            <!-- Post Meta -->
+                                            <ul class="nav meta align-items-center">
+                                                <li class="meta-author">
+                                                    <a href="/blog/{{ post.id }}">
+                                                        Views: {{ post.id | views_count }}</a>
+                                                </li>
+                                                <li class="meta-date"><a
+                                                        href="/blog/{{ post.id }}">{{ post.pub_date|date:'Y-m-d' }}</a>
+                                                </li>
+                                                <li class="meta-comments"><a href="/blog/{{ post.id }}#com"><i
+                                                        class="fa fa-comment"></i>{{ post.comment_set.count }}</a></li>
+                                            </ul>
+                                            <!-- Post Desc -->
+                                            <div class="desc">
+                                                <p>{% autoescape off %}
+<!--                                                    {{ post.content | img_size:"50px" | truncatechars_html:20 }}-->
+                                               {{ post.title }}
+                                                {% endautoescape %}
+                                                </p>
+                                            </div>
+                                            <!-- Read More Button -->
+                                            <a href="/blog/{{ post.id }}" class="btn btn-primary">View More</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <!-- End of Post -->
+                        </div>
+                    </section>
+                    <!-- End of Popular Post  -->
+                </div>
+                {% include 'slide.html' %}
+            </div>
+        </div>
+        <!-- end of post with sidebar -->
+    {% endif %}
+{% endblock %}
+
+{% block subscript %}
+    <!-- Newsletter -->
+    <section class="newsletter-cover">
+        <!-- Overlay -->
+        <div class="nl-bg-ol"></div>
+        <div class="container">
+            <div class="newsletter pt-80 pb-80">
+                <!-- Section title -->
+                <div class="section-title text-center">
+                    <h2>Subscribe Our Newsletter</h2>
+                </div>
+                <!-- End of Section title -->
+                <div class="row">
+                    <div class="col-lg-8 offset-lg-2">
+                        <!-- Newsletter Form -->
+                        <form action="{% url 'myblog:subscript' %}" method="post" id="form_sub" novalidate>
+                            {% csrf_token %}
+                            <div class="input-group">
+                                {% if user.is_authenticated %}
+                                    <input type="hidden" name="email" value="{{ user.email }}">
+                                    <input type="text" class="form-control"
+                                           placeholder="您已登录，点击即可订阅" disabled>
+                                {% else %}
+                                    <input type="text" class="form-control" name="email"
+                                           placeholder="Enter Your Email(请先登录或填写已经注册并激活过的邮箱)" id="email">
+                                {% endif %}
+                                <button class="btn btn-default" id="submit">Subscription</button>
+                            </div>
+                            <p id="msg" style="color: red"></p>
+                        </form>
+                        <!-- End of Newsletter Form -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End of Newsletter -->
+{% endblock %}
+<!-- Footer -->
+<footer class="footer-container d-flex align-items-center">
+    <div class="container">
+        <div class="row align-items-center footer">
+            <div class="col-md-4 text-center text-md-left order-md-1 order-2">
+                <div class="footer-social">
+                    今日访客量：{{ visitor_day_count }}
+                </div>
+            </div>
+            <div class="col-md-4 d-flex justify-content-center order-md-2 order-1">
+                <a href="javascript:void(0);"><img src="{% static 'images/logo.png' %}" alt="" class="img-fluid"></a>
+            </div>
+            <div class="col-md-4 order-md-3 order-3">
+                <div class="footer-cradit text-center text-md-right">
+                    <p>© 2019 <a href="http://www.miibeian.gov.cn/" target="_blank">晋ICP备19010640号</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+<!-- End of Footer -->
+
+<!-- Back to Top Button -->
+<div class="back-to-top d-flex align-items-center justify-content-center">
+    <span><i class="fa fa-long-arrow-up"></i></span>
+</div>
+<!-- End of Back to Top Button -->
+
+<!-- JS Files -->
+
+<!-- ==== JQuery 1.12.1 js file ==== -->
+<script src="{% static "js/jquery-1.12.1.min.js" %}"></script>
+
+<!-- ==== Bootstrap js file ==== -->
+<script src="{% static "js/bootstrap.bundle.min.js" %}"></script>
+
+<!-- ==== Owl Carousel ==== -->
+<script src="{% static "plugins/owl-carousel/owl.carousel.min.js" %}"></script>
+
+<!-- ==== Magnific Popup ==== -->
+<script src="{% static "plugins/magnific-popup/jquery.magnific-popup.min.js" %}"></script>
+
+<!-- ==== Script js file ==== -->
+<script src="{% static "js/scripts.js" %}"></script>
+
+<!-- ==== Custom js file ==== -->
+<script src="{% static "js/custom.js" %}"></script>
+<script>
+    $(function () {
+        $("#search_btn").click(function () {
+            var content = $("#search").val();
+            if ($.trim(content) != '') {
+                $("#form_search").submit();
+            }
+        });
+    });
+</script>
+
+{% block cus_script %}
+    <script>
+        {% if not user.is_authenticated %}
+            var reg = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/;
+            var status = 0;
+            $(function () {
+                $("#email").blur(function () {
+                    var email = $("#email").val();
+                    if ($.trim(email) == '') {
+                        $("#msg").html("请认真填写您的邮箱");
+                    } else if (reg.test(email)) {
+                        $("#msg").html("请稍等。。。");
+                        $.ajaxSetup({
+                            data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+                        });
+                        $.ajax({
+                            type: "POST",
+                            url: "{% url 'myblog:subscript_val' %}",
+                            data: {
+                                email: email
+                            },
+                            async: false,
+                            dataType: "JSON",
+                            success: function (data) {
+                                status = data['status'];
+                                $("#msg").html(data['msg']);
+                            }, error: function () {
+                                $("#msg").html('出错了， 等会儿试试看吧');
+                            }
+                        })
+                    } else {
+                        $("#msg").html("邮箱格式错误");
+                    }
+                });
+                $('#submit').click(function () {
+                    if (status == 1) {
+                        $('#form_sub').submit();
+                    } else if ($("#email").val() == "") {
+                        $("#msg").html("请先填写您的邮箱");
+                        return false
+                    } else {
+                    	return false
+                    }
+                });
+            });
+        {% else %}
+            $('#submit').click(function () {
+                var status = 0;
+                var email = '{{ user.email }}';
+                $("#msg").html("请稍等。。。");
+                $.ajaxSetup({
+                    data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+                });
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'myblog:subscript_val' %}",
+                    data: {
+                        email: email
+                    },
+                    async: false,
+                    dataType: "JSON",
+                    success: function (data) {
+                        status = data['status'];
+                        $("#msg").html(data['msg']);
+                    }, error: function () {
+                        $("#msg").html('出错了， 等会儿试试看吧');
+                    }
+                });
+                if (status == 1) {
+                    $("#msg").html("");
+                    $('#form_sub').submit();
+                } else {
+                    return false
+                }
+            });
+        {% endif %}
+
+    </script>
+{% endblock %}
+</body>
+</html>

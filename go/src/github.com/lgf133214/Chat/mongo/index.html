@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ch">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+</head>
+<body>
+
+</body>
+<script>
+    function sendMsg(name, msg) {
+        $.post({
+            url: "http://localhost:8848/sendMsg",
+            dataType: "json",
+            data: {
+                name: name,
+                msg: msg
+            },
+            success: function (data) {
+                console.log(data)
+            },
+            error: function () {
+                console.log('err')
+            }
+        })
+    }
+
+    function getMsg(time) {
+        $.ajax({
+            url: "http://localhost:8848/getMsg?last_time=" + time,
+            dataType: "json",
+            success: function (data) {
+                console.log(data)
+            },
+            error: function () {
+                console.log('err')
+            }
+        })
+    }
+</script>
+</html>

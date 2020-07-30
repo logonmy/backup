@@ -1,0 +1,65 @@
+﻿{{template "header" .}}
+<!-- Page title -->
+<div class="page-title">
+    <div class="container">
+        <h2>Blog List</h2>
+        <ul class="nav">
+            <li><a href="/">主页</a></li>
+            <li><a href="javascript:void(0);">Blog</a></li>
+            <li>全部文章</li>
+        </ul>
+    </div>
+</div>
+<!-- End of Page title -->
+
+<div class="container pt-120 pb-90">
+    <div class="row">
+        {{range .Posts}}
+            <!-- Post -->
+            <div class="col-md-6">
+                <div class="post-default post-has-no-thumb">
+                    <div class="post-data">
+                        <!-- Category -->
+                        <div class="cats"><a href="/category/{{.Category.Id}}">{{.Category.Category}}</a></div>
+                        <!-- Title -->
+                        <div class="title">
+                            <h2><a href="/view/{{.Id}}">{{.Title}}</a></h2>
+                        </div>
+                        <!-- Post Meta -->
+                        <ul class="nav meta align-items-center">
+                            <li class="meta-author">
+                                <img src="/assets/images/blog/author.jpg" alt="" class="img-fluid">
+                                <a href="javascript:void(0);">Alex Garry</a>
+                            </li>
+                            <li class="meta-date"><a href="javascript:void(0);">{{.PubTime | .getFmtTime}}</a></li>
+                            <li class="meta-comments"><a href="javascript:void(0);"><i
+                                            class="fa fa-comment"></i>{{len .Comments}}</a>
+                            </li>
+                        </ul>
+                        <!-- Post Desc -->
+                        <div class="desc">
+                            <p>
+                                {{.Content|.getDesc}}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End of Post -->
+        {{end}}
+    </div>
+    <!-- Post Pagination -->
+    <div class="post-pagination d-flex justify-content-center">
+        {{range .Paginations}}
+            {{if .current}}
+                <span class="current">{{.page}}</span>
+            {{else}}
+                <a href="?page={{.page}}">{{.page}}</a>
+            {{end}}
+        {{end}}
+        {{/* todo next last */}}
+        <a href=""><i class="fa fa-angle-right"></i></a>
+    </div>
+    <!-- End of Post Pagination -->
+</div>
+{{template "footer" .}}

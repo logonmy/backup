@@ -1,0 +1,137 @@
+﻿{{template "header" .}}
+<!-- Page title -->
+<div class="page-title">
+    <div class="container">
+        <h2>联系作者</h2>
+        <ul class="nav">
+            <li><a href="/">主页</a></li>
+            <li>联系作者</li>
+        </ul>
+    </div>
+</div>
+<!-- End of Page title -->
+
+<div class="container pt-120 pb-120">
+    <!-- Contact Cover -->
+    <div class="contact-cover" style="text-align: center">
+        <img src="/assets/images/blog/contact.jpg" alt="" class="img-fluid" width="300px">
+    </div>
+    <!-- End of Contact Cover -->
+
+    <div class="biz-contact-form">
+        <!-- Contact Form Title -->
+        <div class="title text-center">
+            <h2>Get In Touch</h2>
+            <p>Duis vestibulum elit vel neque pharetra vulputate. Quisque scelerisque nisi urna. Duis rutrum non risus
+                in imperdiet. Proin molestie accumsan nulla sit amet mattis. Ut vel tristique neque. Praesent purus
+                eros, aliquet sit amet.</p>
+        </div>
+        <!-- End of Contact Form Title -->
+
+        <div class="my-contact-form-cover">
+            <div class="row">
+                <div class="col-md-6">
+                    <input type="text" id="username" name="name" class="form-control" placeholder="Your Name" required>
+                </div>
+                {{if .Login}}
+                    <div class="col-md-6">
+                        <input type="hidden" id="email" name="email" value="{{ .Email }}">
+                        <input type="text" class="form-control"
+                               placeholder="您已登录，将以您的登录邮箱作为发件人发送" disabled>
+                    </div>
+                {{ else }}
+                    <div class="col-md-6">
+                        <input type="email" id="email" class="form-control" name="email"
+                               placeholder="Email(以此为发件人,需要注册并激活)" required>
+                    </div>
+                {{end}}
+                <div class="col-md-12">
+                    <textarea name="message" id="message" class="form-control" placeholder="Your Message"
+                              required></textarea>
+                </div>
+                <div class="col-md-12 text-center">
+                    <button type="button" class="btn btn-primary" id="submit">Submit</button>
+                </div>
+            </div>
+            <div class="form-response" style="color: red"></div>
+        </div>
+    </div>
+</div>
+<script>
+    {{ if .Login}}
+    $("#submit").click(function () {
+        var name = $("#username").val();
+        var message = $("#message").val();
+        if ($.trim(name) == '') {
+            $(".form-response").html("请填写您的署名");
+        } else if ($.trim(message) == '') {
+            $(".form-response").html("请填写您的留言信息");
+        } else {
+            $(".form-response").html('请稍等。。。');
+            $.ajax({
+                type: "POST",
+                url: "/sendMail",
+                data: {
+                    name: $("#username").val(),
+                    email: $("#email").val(),
+                    message: $("#message").val(),
+                },
+                dataType: "JSON",
+                success: function (data) {
+                    if (data["status"] == "ok") {
+                        $(".form-response").html(data['msg']);
+                        alert(data['msg']);
+                        window.location.reload();
+                    } else {
+                        $(".form-response").html(data['msg']);
+                    }
+                }, error: function () {
+                    $(".form-response").html('出错了,等会试试看吧？');
+                }
+            });
+        }
+        return false
+    });
+    {{else}}
+    var reg = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/;
+
+    $("#submit").click(function () {
+        var name = $("#username").val();
+        var message = $("#message").val();
+        if ($.trim(name) == '') {
+            $(".form-response").html("请填写您的署名");
+        } else if ($.trim(message) == '') {
+            $(".form-response").html("请填写您的留言信息");
+        } else if ($("#email").val() == '') {
+            $(".form-response").html("请填写您的邮箱");
+        } else if (!reg.test($("#email").val())) {
+            $(".form-response").html("邮箱格式不对哦");
+        } else {
+            $(".form-response").html('请稍等。。。');
+            $.ajax({
+                type: "POST",
+                url: "/sendMail",
+                data: {
+                    name: $("#username").val(),
+                    email: $("#email").val(),
+                    message: $("#message").val(),
+                },
+                dataType: "JSON",
+                success: function (data) {
+                    if (data["status"] == "ok") {
+                        $(".form-response").html(data['msg']);
+                        alert(data['msg']);
+                        window.location.reload();
+                    } else {
+                        $(".form-response").html(data['msg']);
+                    }
+                }, error: function () {
+                    $(".form-response").html('出错了,等会试试看吧？');
+                }
+            });
+        }
+        return false
+    });
+    {{end}}
+</script>
+{{template "footer" .}}

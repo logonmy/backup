@@ -1,0 +1,288 @@
+﻿<!DOCTYPE html>
+<html lang="ch">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <link rel="icon" href="/assets/images/favicon.ico">
+    <!-- ==== Baidu JQuery js file ==== -->
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/blueimp-md5/1.1.0/js/md5.min.js"></script>
+    <script src="/assets/js/img_ver.js"></script>
+
+    <style>
+        .bxs-row {
+            margin-bottom: 12px;
+        }
+
+        .logo-box {
+            width: 404px;
+            margin: 120px auto;
+            border: 1px solid #e5e5e5;
+            border-radius: 4px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            height: 360px;
+        }
+
+        .login {
+            position: absolute;
+            width: 320px;
+            left: 0;
+            top: 0;
+            padding: 42px 42px 36px;
+            transition: all 0.8s;
+        }
+
+        .username, .password, .email, .btn {
+            height: 44px;
+            width: 100%;
+            padding: 0 10px;
+            border: 1px solid #9da3a6;
+            background: #fff;
+            text-overflow: ellipsis;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            -khtml-border-radius: 4px;
+            border-radius: 4px;
+            -webkit-box-shadow: none;
+            -moz-box-shadow: none;
+            box-shadow: none;
+            color: #000;
+            font-family: Helvetica, Arial, sans-serif;
+            font-weight: 400;
+            direction: ltr;
+            font-size: 13px;
+        }
+
+        .submit {
+            background-color: #0070ba;
+            color: #fff;
+            border: 1px solid #0070ba;
+        }
+
+        .submit:hover {
+            background-color: #005ea6;
+        }
+
+        .verBox {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            left: 404px;
+            top: 0;
+            opacity: 0;
+            transition: all 0.8s;
+            padding-top: 55px;
+        }
+
+        .err {
+            margin: 12px 0 0;
+            line-height: 12px;
+            height: 12px;
+            font-size: 12px;
+            color: red;
+        }
+
+        .slider-btn {
+            position: absolute;
+            width: 44px;
+            height: 44px;
+            left: 0;
+            top: -7px;
+            z-index: 12;
+            cursor: pointer;
+            background-image: url("/assets/images/login/sprite.3.2.0.png");
+            background-position: 0 -84px;
+            transition: inherit
+        }
+
+        .ver-tips {
+            position: absolute;
+            left: 0;
+            bottom: -22px;
+            background: rgba(255, 255, 255, .9);
+            height: 22px;
+            line-height: 22px;
+            font-size: 12px;
+            width: 100%;
+            margin: 0;
+            text-align: left;
+            padding: 0 8px;
+            transition: all .4s
+        }
+
+        .slider-tips {
+            bottom: 0
+        }
+
+        .ver-tips i {
+            display: inline-block;
+            width: 22px;
+            height: 22px;
+            vertical-align: top;
+            background-image: url("/assets/images/login/sprite.3.2.0.png");
+            background-position: -4px -1229px
+        }
+
+        .ver-tips span {
+            display: inline-block;
+            vertical-align: top;
+            line-height: 22px;
+            color: #455
+        }
+
+        .active-tips {
+            display: block
+        }
+
+        .hidden {
+            display: none
+        }
+
+        .re-btn {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            height: 28px;
+            padding: 0 16px
+        }
+
+        .re-btn a {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            margin: 7px 0;
+            background-image: url("/assets/images/login/sprite.3.2.0.png");
+            background-position: 0 -1179px;
+            cursor: pointer
+        }
+
+        .re-btn a:hover {
+            background-position: 0 -1193px
+        }
+
+        .submit:hover {
+            cursor: pointer;
+        }
+
+        a {
+            text-decoration: none;
+            color: #08acee;
+        }
+
+        a:active, a:hover {
+            outline: 0;
+        }
+
+        a {
+            color: #333;
+        }
+
+        a:hover {
+            color: #bbb;
+        }
+    </style>
+
+</head>
+<body>
+
+<div class="logo-box">
+    <div class="login" style="">
+        <div class="bxs-row" style="text-align:center;">
+            <img id="logo" src="/assets/images/login/logo.jpg" style="width:72px;"><span class="tips"
+                                                                                         style="color:red;">{{with .Msg}}{{.}}{{else}}忍住不哭来段口技{{end}}</span>
+        </div>
+        <div class="bxs-row">
+            <input type="text" class="username" id="uname" placeholder="用户名" value="">
+            <p class="err" id="err"></p>
+        </div>
+        <div class="bxs-row">
+            <input type="password" class="password" id="passwd" placeholder="密码">
+            <p class="err"></p>
+        </div>
+        <div class="bxs-row">
+            <input type="submit" class="submit btn" value="登录">
+        </div>
+    </div>
+    <div class="verBox">
+        <div id="imgVer" style="display:inline-block;"></div>
+    </div>
+</div>
+
+<script>
+    imgVer({
+        el: '$("#imgVer")',
+        width: '260',
+        height: '116',
+        img: [
+            "/assets/images/login/ver-1.png",
+            "/assets/images/login/ver-2.png",
+            "/assets/images/login/ver-3.png",
+        ],
+        success: function () {
+            $(".login").css({
+                "left": "0",
+                "opacity": "1"
+            });
+            $(".verBox").css({
+                "left": "404px",
+                "opacity": "0"
+            });
+            $(".tips").html('请稍等。。。');
+            $.ajax({
+                type: "POST",
+                url: "/login",
+                data: {
+                    username: $("#uname").val(),
+                    password: hex_md5($("#passwd").val()),
+                },
+                dataType: "JSON",
+                success: function (data) {
+                    $("#err").html(data['msg']);
+                    $(".tips").html(data['tip']);
+                    $("#logo").attr("src", "/assets/images/login/login-err.png");
+                    if (data['status'] == 'ok') {
+                        window.location = '/'
+                    }
+                }, error: function () {
+                    $(".tips").html('出错了，等会儿试试看吧');
+                    $("#logo").attr("src", "/assets/images/login/login-err.png")
+                }
+            });
+        }
+    });
+
+    var reg = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/;
+
+
+    $(".submit").on('click', function () {
+        $("#err").html('');
+        if (!$(".username").val()) {
+            $(".tips").html('老兄！！你用户名呢！？？？');
+            $("#logo").attr("src", "/assets/images/login/null-password.jpg")
+        } else if (!$(".password").val()) {
+            $(".tips").html('老兄！！你密码呢！？？？');
+            $("#logo").attr("src", "/assets/images/login/null-password.jpg")
+        } else {
+            $(".login").css({
+                "left": "-404px",
+                "opacity": "0"
+            });
+            $(".verBox").css({
+                "left": "0",
+                "opacity": "1"
+            })
+        }
+    });
+</script>
+<div style="text-align:center;">
+    <a href="/reset/pw">忘记密码？</a>
+    <a href="/register">还没有账号？->注册</a>
+    <a href="/">回首页</a>
+</div>
+</body>
+</html>

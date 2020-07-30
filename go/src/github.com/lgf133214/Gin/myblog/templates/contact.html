@@ -1,0 +1,162 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+{% block banner %}{% endblock %}
+{% block subscript %}{% endblock %}
+{% block main %}
+    <!-- Page title -->
+    <div class="page-title">
+        <div class="container">
+            <h2>Contact</h2>
+            <ul class="nav">
+                <li><a href="/">Home</a></li>
+                <li>Contact</li>
+            </ul>
+        </div>
+    </div>
+    <!-- End of Page title -->
+
+    <div class="container pt-120 pb-120">
+        <!-- Contact Cover -->
+        <div class="contact-cover" style="text-align: center">
+            <img src="{% static 'images/blog/contact.jpg' %}" alt="" class="img-fluid" width="300px">
+        </div>
+        <!-- End of Contact Cover -->
+
+        <div class="biz-contact-form">
+            <!-- Contact Form Title -->
+            <div class="title text-center">
+                <h2>Get In Touch</h2>
+                <p>可以选择使用自己的邮箱向 <b>contact@ligaofeng.top</b> 发送电子邮件或者在本页下方编辑后发送<br>--想弄个机器人玩，如果弄出来就建个群来玩了<br>在此再次为本站给各位带来的各种不便道个歉🙏，另外，如果有值得优化的地方还请提醒一下这个新晋菜鸡😋
+                </p>
+            </div>
+            <!-- End of Contact Form Title -->
+            <div class="my-contact-form-cover">
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="text" id="username" class="form-control" placeholder="Your Name"
+                               required>
+                    </div>
+                    {% if user.is_authenticated %}
+                        <div class="col-md-6">
+                            <input type="hidden" id="email" value="{{ user.email }}">
+                            <input type="text" class="form-control"
+                                   placeholder="您已登录，将以您的登录邮箱作为发件人发送(不会对您造成任何影响)" disabled>
+                        </div>
+                    {% else %}
+                        <div class="col-md-6">
+                            <input type="text" id="email" class="form-control"
+                                   placeholder="Email(以此为发件人， 不会对您造成任何影响，需要先注册并激活)" required>
+                        </div>
+                    {% endif %}
+                    <div class="col-md-12">
+                            <textarea class="form-control" id="message" placeholder="Your Message"
+                                      required></textarea>
+                    </div>
+                    <div class="col-md-12 text-center">
+                        <button type="button" class="btn btn-primary" id="submit">Submit</button>
+                    </div>
+                </div>
+                <div class="form-response" style="color: red"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block cus_script %}
+    <script>
+        {% if user.is_authenticated %}
+            $("#submit").click(function () {
+                var name = $("#username").val();
+                var message = $("#message").val();
+                if ($.trim(name) == '') {
+                    $(".form-response").html("请填写您的署名");
+                } else if ($.trim(message) == '') {
+                    $(".form-response").html("请填写您的留言信息");
+                } else {
+                    $.ajaxSetup({
+                        data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+                    });
+
+                    $(".form-response").html('请稍等。。。');
+                    $.ajax({
+                        type: "POST",
+                        url: "{% url 'myblog:send_contact_mail' %}",
+                        data: {
+                            name: $("#username").val(),
+                            email: $("#email").val(),
+                            message: $("#message").val(),
+                        },
+                        dataType: "JSON",
+                        success: function (data) {
+                            $(".form-response").html(data['msg']);
+                            alert(data['msg']);
+                            window.location.reload();
+
+                        }, error: function () {
+                            $(".form-response").html('出错了，等会儿试试看吧');
+                        }
+                    });
+                }
+                return false
+            });
+        {% else %}
+            var status = 0;
+            $("#email").blur(function () {
+                $.ajaxSetup({
+                    data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+                });
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'myblog:email_val' %}",
+                    data: {
+                        email: $("#email").val()
+                    },
+                    dataType: "JSON",
+                    success: function (data) {
+                        status = data['status'];
+                        $(".form-response").html(data['msg']);
+                    }, error: function () {
+                        $(".form-response").html('出错了， 等会儿试试看吧');
+                    }
+                })
+            });
+            $("#submit").click(function () {
+                var name = $("#username").val();
+                var message = $("#message").val();
+                if ($.trim(name) == '') {
+                    $(".form-response").html("请填写您的署名");
+                } else if ($.trim(message) == '') {
+                    $(".form-response").html("请填写您的留言信息");
+                } else {
+                    if (status == 1) {
+                        $(".form-response").html('请稍等。。。');
+                        $.ajax({
+                            type: "POST",
+                            url: "{% url 'myblog:send_contact_mail' %}",
+                            data: {
+                                name: $("#username").val(),
+                                email: $("#email").val(),
+                                message: $("#message").val(),
+                            },
+                            dataType: "JSON",
+                            success: function (data) {
+                                $(".form-response").html(data['msg']);
+                                alert(data['msg']);
+                                window.location.reload();
+                            }, error: function () {
+                                $(".form-response").html('出错了，等会儿试试看吧');
+                            }
+                        });
+
+                    } else {
+                        if ($("#email").val() == '') {
+                            $(".form-response").html("请填写您的邮箱");
+                        }
+                    }
+                }
+                return false
+            });
+        {% endif %}
+    </script>
+
+{% endblock %}
+
